@@ -22,7 +22,19 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MyAwaited<T> = any
+type PromiseLike<T> = {
+  then: (onfulfilled: (arg: T) => unknown) => unknown
+}
+
+type MyAwaited<T extends PromiseLike<any> | Promise<any>> = T extends Promise<
+  infer Inner
+>
+  ? Inner extends Promise<any>
+    ? MyAwaited<Inner>
+    : Inner
+  : T extends PromiseLike<infer U>
+  ? U
+  : false
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

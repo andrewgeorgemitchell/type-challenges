@@ -34,7 +34,13 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MyReadonly2<T, K> = any
+type MyReadonly2<T, K extends keyof T = keyof T> = {
+  readonly [ReadonlyProp in keyof T as ReadonlyProp extends K
+    ? ReadonlyProp
+    : never]: T[ReadonlyProp]
+} & {
+  [Prop in keyof T as Prop extends K ? never : Prop]: T[Prop]
+}
 
 /* _____________ Test Cases _____________ */
 import type { Alike, Expect } from '@type-challenges/utils'
@@ -43,7 +49,7 @@ type cases = [
   Expect<Alike<MyReadonly2<Todo1>, Readonly<Todo1>>>,
   Expect<Alike<MyReadonly2<Todo1, 'title' | 'description'>, Expected>>,
   Expect<Alike<MyReadonly2<Todo2, 'title' | 'description'>, Expected>>,
-  Expect<Alike<MyReadonly2<Todo2, 'description' >, Expected>>,
+  Expect<Alike<MyReadonly2<Todo2, 'description'>, Expected>>,
 ]
 
 // @ts-expect-error

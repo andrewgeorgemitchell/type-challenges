@@ -30,7 +30,9 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MyOmit<T, K> = any
+type MyOmit<T, K extends keyof T> = {
+  [Property in keyof T as Property extends K ? never : Property]: T[Property]
+}
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
@@ -39,6 +41,8 @@ type cases = [
   Expect<Equal<Expected1, MyOmit<Todo, 'description'>>>,
   Expect<Equal<Expected2, MyOmit<Todo, 'description' | 'completed'>>>,
 ]
+
+type tes = MyOmit<Todo, 'description'>
 
 // @ts-expect-error
 type error = MyOmit<Todo, 'description' | 'invalid'>

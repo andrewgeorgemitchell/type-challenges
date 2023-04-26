@@ -18,14 +18,28 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Includes<T extends readonly any[], U> = any
+type IsEqual<T, U> = T extends U ? true : false
+
+type Includes<Value extends any[], Item> = IsEqual<Value[0], Item> extends true
+  ? true
+  : Value extends [Value[0], ...infer rest]
+  ? Includes<rest, Item>
+  : false
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
 
+type te = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Kars'>
+
+type te2 = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'>
+
 type cases = [
-  Expect<Equal<Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Kars'>, true>>,
-  Expect<Equal<Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'>, false>>,
+  Expect<
+    Equal<Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Kars'>, true>
+  >,
+  Expect<
+    Equal<Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'>, false>
+  >,
   Expect<Equal<Includes<[1, 2, 3, 5, 6, 7], 7>, true>>,
   Expect<Equal<Includes<[1, 2, 3, 5, 6, 7], 4>, false>>,
   Expect<Equal<Includes<[1, 2, 3], 2>, true>>,
